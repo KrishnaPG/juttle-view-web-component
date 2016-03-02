@@ -1,0 +1,46 @@
+<meta http-equiv="content-type" content="text/html; charset=UTF8">
+<script type="text/javascript" src="node_modules/juttle-client-library/dist/juttle-client-library.js"></script>
+<template id="juttle-view-element-template">
+<style type="text/css">
+    @import url('node_modules/juttle-client-library/dist/juttle-client-library.css');
+</style>
+<div id="juttle-view-container"></div>
+</template>
+
+<script>
+
+(function() {
+    var importDoc = document.currentScript.ownerDocument;
+    var JuttleViewElementProto = Object.create(HTMLElement.prototype);
+
+    JuttleViewElementProto.createdCallback = function() {
+      var template = importDoc.querySelector('#juttle-view-element-template');
+
+      var clone = document.importNode(template.content, true);
+
+      var root = this.createShadowRoot();
+      root.appendChild(clone);
+      this._root = root;
+    };
+
+    JuttleViewElementProto.attachedCallback = function() {
+      var juttle = this.attributes.juttle.value;
+      var viewOptions = this.attributes.options ? ' -o ' + this.attributes.options.value : '';
+      var type = this.attributes.type ? this.attributes.type.value : 'table';
+      var juttleViewContainer = this._root.querySelector('#juttle-view-container');
+      var client = new JuttleClientLibrary("localhost:2000");
+      var view = new client.View(juttleViewContainer);
+
+      view.run({
+          program: juttle + ' | view ' + type + ' ' + viewOptions
+      }).catch(function(err) {
+          console.log('GOT AN ERROR: ', err);
+      });
+    }
+
+    var Widget = document.registerElement('juttle-view', {
+      prototype: JuttleViewElementProto
+    });
+})();
+
+</script>

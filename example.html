@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <script src="node_modules/webcomponents.js/webcomponents-lite.min.js"></script>
+    <link rel="import" href="juttle-view-element.html">
+    <style type="text/css">
+      body { background-color: black; }
+    </style>
+  </head>
+  <body>
+    <juttle-view juttle="emit -limit 10 -from :10 seconds ago: | put v = count() * 2" type="timechart" options="{ title: 'a timechart'}"></juttle-view>
+    <juttle-view juttle="emit -limit 2 | put v = count()"></juttle-view>
+  </body>
+</html>
